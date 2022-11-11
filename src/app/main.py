@@ -60,7 +60,7 @@ def get_stat(from_date: DateTime, to_date: DateTime, id_req: int = Body(...), se
     return [StatCreate(id_req=st.id_req, amount=st.amount, time_of_req=st.time_of_req.isoformat(timespec='minutes')) for
             st in stats]
 
-
+'''
 @app.post("/show_stat")
 def show_stat(session: Session = Depends(get_session)):
     result = session.execute(select(Stat))
@@ -74,3 +74,4 @@ def show_req(session: Session = Depends(get_session)):
     result = session.execute(select(Req))
     stats = result.scalars().all()
     return stats
+'''
