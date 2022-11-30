@@ -3,7 +3,7 @@ import urllib.parse
 from bs4 import BeautifulSoup as bs
 
 
-def get_amount(phrase):
+async def get_amount(phrase):
     base_url = "https://fast-anime.ru/search/?search"
     param = {'': phrase}
     url = base_url + urllib.parse.urlencode(param)
