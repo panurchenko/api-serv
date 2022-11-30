@@ -9,15 +9,7 @@ from app.models import Req, ReqCreate, Stat, StatCreate, DateTime
 from app.parsing import get_amount
 from datetime import datetime
 
-app = FastAPI()
 
-
-@app.on_event("startup")
-def on_startup():
-    init_db()
-
-
-@app.post("/start_collecting_stat")
 async def start_collecting_stat(session: Session = Depends(get_session)):
     while True:
         result = session.execute(select(Req))
@@ -30,6 +22,14 @@ async def start_collecting_stat(session: Session = Depends(get_session)):
             session.refresh(st)
         await asyncio.sleep(3600)
 
+        
+app = FastAPI()
+
+
+@app.on_event("startup")
+def on_startup():
+    init_db()
+    
 
 @app.post("/add")
 def add_req(req: ReqCreate, session: Session = Depends(get_session)):
@@ -40,11 +40,8 @@ def add_req(req: ReqCreate, session: Session = Depends(get_session)):
         session.add(req)
         session.commit()
         session.refresh(req)
-        amount = get_amount(req.phrase)
-        st = Stat(id_req=req.id, amount=amount, time_of_req=datetime.now())
-        session.add(st)
-        session.commit()
-        session.refresh(st)
+        if req.id == 1:
+            asyncio.create_task(start_collecting_stat())
     else:
         req = request[0]
     return req.id
